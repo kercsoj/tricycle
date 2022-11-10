@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tricycle</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="game.js"></script>
+</head>
+
+<body>
+    <canvas id="canvas_t" tabindex="1"></canvas>
+    <!-- The Help modal dialog-->
+    <div id="myHelpModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Tricycle description</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Description</h3>
+                <b>Tricycle</b> is a 2-D combination puzzle, somewhat similar to Rubic's cube. It has 37 particles
+                    with three different colors. The purpose of the game is to rotate the circles left or right so the
+                    particles with the same colors occupy the same sector of the circle.
+                <h3>Navigation</h3>
+                <ul>
+                    <li><b>Mouse:</b> move the mouse pointer close to the center of the given circle and click to rotate
+                        left or right.</li>
+                    <li><b>Keyboard:</b> Use <b>W</b>, <b>A</b>, <b>D</b> keys to set the focus on a given circle and
+                        then <b>&#8592;</b> or <b>&#8594;</b> to rotate the selected circle.
+                    </li>
+                </ul>
+                <h3>Notation</h3>
+                The game uses the following notation to identify the moves:
+                <ul>
+                    <li><b>T / t: </b>rotate the top circle right or left.</li>
+                    <li><b>L / l: </b>rotate the left circle right or left.</li>
+                    <li><b>R / r: </b>rotate the right circle right or left.</li>
+                </ul>
+                <h3>Help</h3>
+                If you are stuck, you can use <b>Hint</b> or <b>Solve</b> buttons to help you out. Hint uses a
+                    recursive search to find the next best move, Solve uses a genetic algorithm to find the solution.
+                <h3>Good luck!</h3>
+            </div>
+        </div>
+
+    </div>
+    <div class="footer">
+        <button class="button" onclick="onPuzzleShuffle()">Shuffle</button>
+        <button class="button" onclick="onPuzzleReset()">Reset</button>
+        <button class="button" onclick="onPuzzleHint()">Hint</button>
+        <button class="button" onclick="onPuzzleSolve()">Solve</button>
+        <button class="button" id="myHelpBtn">Help</button>
+        <p id="footer_text"></p>
+    </div>
+
+</body>
+
+</html>

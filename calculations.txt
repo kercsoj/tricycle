@@ -1,0 +1,14 @@
+Estimated puzzle complexity
+37! = 13763753091226345046315979581580902400000000
+12! (red eyes) = 479 001 600
+6! (red star) = 720
+7! (green eyes) = 5040
+4! (green star) = 24
+5! (blue eyes) = 120
+3! (blue star) = 6
+
+479001600*720*5040*24*120*6 = 30036113385062400000
+
+37^16                   = 12,337,511,914,217,166,362,274,241 (is it possible to solve with maximum 16 permutations from any shuffled state?)
+37! / (12!*6!*7!*4!*5!*3!) = 458,240,149,608,416,150,976,000
+Rubik's cube =                    43,252,003,274,489,856,000
