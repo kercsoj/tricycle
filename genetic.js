@@ -94,7 +94,7 @@ export function genetic_algorithm_init(lgc, bits, iter, popsize, cross, mut, max
 
   // setup idle callback function
   console.log("Request genetic algo set idle callback");
-  taskHandle = window.requestIdleCallback(genetic_algorithm_step, { timeout: 100 });
+  taskHandle = window.requestAnimationFrame(genetic_algorithm_step);
   console.log("Genetic algorithm init done");
 
 }
@@ -144,7 +144,7 @@ function genetic_algorithm_step(deadline) {
 
     // schedule next idle time calback
     console.log("Genetic algorithm next step schedule");
-    taskHandle = window.requestIdleCallback(genetic_algorithm_step, { timeout: 100 });
+    taskHandle = window.requestAnimationFrame(genetic_algorithm_step);
   } else {
     console.log("%d, done!", n_gen);
     genetic_solve_done = true;
