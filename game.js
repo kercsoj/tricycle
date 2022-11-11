@@ -172,13 +172,18 @@ window.onPuzzleShuffle = function onShuffle() {
  * Solves the puzzle. Well, at least it tries... :)
  */
 window.onPuzzleSolve = function onSolve() {
+    console.log("Gamestate:" + logic.getGameState());
+    console.log("Animation status:" + visual.animationInProgress());
+
     if (logic.getGameState() == CircleLogic.SOLVING || visual.animationInProgress()) return;
 
     if (!logic.isSolved()) {
+        console.log("Not yet solved");
         // save current shuffled state
         logic.storeState();
         visual.drawParticles();
         visual.showStatusText("Initialize solver engine...");
+        console.log("Initialize solver engine...");
         solver.geneticSolver();
     }
 }
