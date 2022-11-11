@@ -173,7 +173,7 @@ export class CircleVisual {
      */
     prepCanvas() {
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight * 0.90; // TODO: move this out to the css
+        this.canvas.height = window.innerHeight * 0.85; // TODO: move this out to the css
 
         this.radius = Math.min(this.canvas.width, this.canvas.height) * 3 / 10;
         this.cx1 = this.canvas.width / 2;
