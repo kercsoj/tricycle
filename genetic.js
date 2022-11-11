@@ -66,8 +66,6 @@ function mutation(bitstring, r_mut) {
 export function genetic_algorithm_init(lgc, bits, iter, popsize, cross, mut, max_score) {
 
   // stop previous solver
-  console.log("Genetic algorithm init");
-  console.log("Stop previous solver");
   genetic_algorithm_stop();
 
   // init algorithm parameters
@@ -93,16 +91,11 @@ export function genetic_algorithm_init(lgc, bits, iter, popsize, cross, mut, max
   [genetic_best, genetic_score] = [pop[0], logic.score(pop[0])];
 
   // setup idle callback function
-  console.log("Request genetic algo set idle callback");
   taskHandle = window.requestAnimationFrame(genetic_algorithm_step);
-  console.log("Genetic algorithm init done");
-
 }
 
 // genetic algorithm stepper 
 function genetic_algorithm_step(deadline) {
-  console.log("Genetic algorithm step init");
-
   if (n_gen < n_iter) {
     var p1, p2;
     // evaluate all candidates in the population
@@ -143,7 +136,6 @@ function genetic_algorithm_step(deadline) {
     n_gen++;
 
     // schedule next idle time calback
-    console.log("Genetic algorithm next step schedule");
     taskHandle = window.requestAnimationFrame(genetic_algorithm_step);
   } else {
     console.log("%d, done!", n_gen);
@@ -155,7 +147,6 @@ function genetic_algorithm_step(deadline) {
 // stop genetic solver
 export function genetic_algorithm_stop() {
   if (taskHandle) {
-    console.log("Stoping genetic solver %d", taskHandle);
     window.cancelIdleCallback(taskHandle);
     taskHandle = null;
     genetic_solve_done = false;

@@ -93,7 +93,6 @@ export class CircleSolver {
         r_mut = 0.01;
 
         this.logic.setGameState(CircleLogic.SOLVING);
-        console.log("Genetic algo init");
         genetic_algorithm_init(this.logic, n_bits, n_iter, n_pop, r_cross, r_mut, MAX_SCORE);
 
         if (hIntervalTimer) {
@@ -124,12 +123,8 @@ export class CircleSolver {
             }
         });
 
-        console.log("Setup updater method");
-
-
         // (re)create timed function to check solution
         hIntervalTimer = window.setInterval(updater, 1000, this.logic, this.visual);
-        console.log("Setup timer " + hIntervalTimer);
     }
     /**
      * Just a wrapper for the sake of consistency
