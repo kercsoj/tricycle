@@ -6,6 +6,10 @@ body {
     overflow: hidden;
 }
 
+p {
+    margin: 2px;
+}
+
 #canvas_t {
     position: static;
     width: 100%;
@@ -16,7 +20,6 @@ body {
 }
 
 .footer {
-    margin: auto;
     width: 100%;
     text-align: center;
     font-family: 'Courier New', Courier, monospace;
