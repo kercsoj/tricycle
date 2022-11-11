@@ -108,10 +108,10 @@ export class CircleSolver {
                 logic.permutation(simplified);
                 if (logic.isSolved()) {
                     // puzzle completely solved
-                    visual.showStatusText(`Done! f(${simplified.join("")}) = ${genetic_score}/${MAX_SCORE}`);
+                    visual.showStatusText(`Solved: ${genetic_score}/${MAX_SCORE}`);
                     logic.setGameState(CircleLogic.SOLVED);
                 } else {
-                    visual.showStatusText(`Partially solved! f(${simplified.join("")}) = ${genetic_score}/${MAX_SCORE}. Hit [Solve] to continue solving.`);
+                    visual.showStatusText(`Partially solved: ${genetic_score}/${MAX_SCORE}. Hit [Solve] to retry.`);
                     logic.setGameState(CircleLogic.SOLVED_PARTIAL);
                 }
                 // restore state so the animation can happen
@@ -119,7 +119,7 @@ export class CircleSolver {
                 visual.animateParticles(simplified, "solver");
                 window.clearInterval(hIntervalTimer);
             } else {
-                visual.showStatusText(`${getProgressIndicator()} Trying to solve the puzzle... current score: ${genetic_score}/${MAX_SCORE}`);
+                visual.showStatusText(`${getProgressIndicator()} Solving... score: ${genetic_score}/${MAX_SCORE}`);
             }
         });
 

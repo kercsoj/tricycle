@@ -8,6 +8,7 @@
 
 * **Mouse:** move the mouse pointer close to the center of the given circle and click to rotate left or right.
 * **Keyboard:** Use **W**, **A**, **D** keys to set the focus on a given circle and then **←** or **→** to rotate the selected circle.
+* **Tap** close to the center of the given circle to rotate left or right.
 
 ## Notation
 

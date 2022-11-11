@@ -143,7 +143,7 @@ window.onPuzzleHint = function onHint() {
             visual.animateParticles(hint["step"], "hinter");
             visual.showStatusText("Hint: " + hint["step"]);
         } else {
-            visual.showStatusText(`None of the next three steps has a better score: ${curr_score}`);
+            visual.showStatusText("I don't have a short answer. :(");
         }
     }
 }
@@ -165,7 +165,7 @@ window.onPuzzleShuffle = function onShuffle() {
     solver.geneticSolverStop();
     var randsteps = logic.shuffle(SHUFFLE_STEPS);
     visual.drawParticles();
-    visual.showStatusText("Shuffle(" + randsteps.length + "): " + randsteps.join(""));
+    visual.showStatusText("Shuffle(" + randsteps.length + ")");
 }
 
 /**
