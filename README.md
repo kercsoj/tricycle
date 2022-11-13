@@ -2,7 +2,7 @@
 
 ## Description
 
-**Tricycle** is a 2-D combination puzzle, somewhat similar to Rubic's cube. It has 37 particles with three different colors. The purpose of the game is to rotate the circles left or right so the particles with the same colors occupy the same sector of the circle.
+**Tricycle** is a 2-D permutational puzzle, somewhat similar to Rubic's cube. It has 37 particles with three different colors. The purpose of the game is to rotate the circles left or right so the particles with the same colors occupy the same sector of the circle.
 
 ## Navigation
 
