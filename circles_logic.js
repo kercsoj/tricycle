@@ -396,7 +396,8 @@ export class CircleLogic {
     animationDone(step) {
         this.permutationStep(step);
 
-        if (this.isSolved() && this.getGameState() == CircleLogic.SHUFFLED) {
+        var state = this.getGameState();
+        if (this.isSolved() && (state == CircleLogic.SHUFFLED || state == CircleLogic.SOLVED_PARTIAL)) {
             this.setGameState(CircleLogic.SOLVED);
         }
     }

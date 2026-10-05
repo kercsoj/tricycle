@@ -111,6 +111,7 @@ function genetic_algorithm_step(deadline) {
         console.log(">%d, new best f(%s) = %d", n_gen, pop[i].join(""), scores[i]);
         if (genetic_score >= n_maxscore) {
           genetic_solve_done = true;
+          taskHandle = null;
           return;
         }
       }
@@ -147,7 +148,7 @@ function genetic_algorithm_step(deadline) {
 // stop genetic solver
 export function genetic_algorithm_stop() {
   if (taskHandle) {
-    window.cancelIdleCallback(taskHandle);
+    window.cancelAnimationFrame(taskHandle);
     taskHandle = null;
     genetic_solve_done = false;
   }

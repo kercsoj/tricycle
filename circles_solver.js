@@ -41,31 +41,34 @@ export class CircleSolver {
      * @param {int} level - the current level which the recursive search is at.
      * @param {array} steps - the permutation steps done so far
      * @param {int} max_level - the level at which the evaluation will happen
-     * @param {array} solution - the best next step and its score
+     * @param {array} history - the steps done right before the search (e.g. the previous hint),
+     * used to avoid undoing them
+     * @param {array} solution - the best step sequence and its score
      */
-    recursiveSolver(level, steps, max_level, skip, solution) {
+    recursiveSolver(level, steps, max_level, history, solution) {
+        var prevGameState;
         if (level == 0) {
+            prevGameState = this.logic.getGameState();
             this.logic.setGameState(CircleLogic.SOLVING);
         }
         // check desired level for solution
         for (let i = 0; i < MOVEMENT_LOOKUP_TABLE.length; i++) {
             // check if the current movement can be skipped
             let step = MOVEMENT_LOOKUP_TABLE[i];
-            if ((!skip || skip.length <= level
-                || (skip.length > level && step != skip.charAt(level)))
-                && !this.logic.isRedundant(step, steps)) {
+            let prior = history ? history.concat(steps) : steps;
+            if (!this.logic.isRedundant(step, prior)) {
                 this.logic.permutationStep(step);
                 steps.push(step);
                 var sc = this.logic.score();
                 if (sc > solution["score"]) {
-                    // save only the first step and its score
+                    // save the step sequence and its score
                     solution["step"] = steps.slice();
                     solution["score"] = sc;
                     console.log("New hint: f(%s) = %d", steps, sc);
                 }
                 // visit next level
                 if (level < max_level) {
-                    this.recursiveSolver(level + 1, steps, max_level, skip, solution);
+                    this.recursiveSolver(level + 1, steps, max_level, history, solution);
                 }
                 // step back
                 steps.pop();
@@ -73,7 +76,8 @@ export class CircleSolver {
             }
         }
         if (level == 0) {
-            this.logic.setGameState(CircleLogic.SOLVED_PARTIAL);
+            // the search leaves the puzzle as it was, so restore the game state too
+            this.logic.setGameState(prevGameState);
         }
     }
 

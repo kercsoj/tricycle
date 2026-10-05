@@ -23,6 +23,7 @@ canvas.addEventListener('click', function (event) {
 
     var proximity = visual.checkProximity(event.x, event.y);
     if (proximity) {
+        prev_hint = null;
         visual.setFocus(proximity);
         visual.setArrow(proximity);
         visual.animateParticles(proximity);
@@ -82,10 +83,12 @@ canvas.addEventListener("keydown", function (event) {
     var f = visual.getFocus();
     if (f) {
         if (event.code == 'ArrowLeft') {
+            prev_hint = null;
             visual.setArrow("t");
             visual.animateParticles(f.toLowerCase());
         }
         else if (event.code == 'ArrowRight') {
+            prev_hint = null;
             visual.setArrow("T");
             visual.animateParticles(f.toUpperCase());
         }
@@ -128,16 +131,13 @@ window.addEventListener('resize', function () {
  * selects the best next step.
  */
 window.onPuzzleHint = function onHint() {
-    if (logic.getGameState() == CircleLogic.SOLVING) return;
+    if (logic.getGameState() == CircleLogic.SOLVING || visual.animationInProgress()) return;
 
     if (!logic.isSolved()) {
         var curr_score = logic.score();
         var hint = { "score": curr_score, "step": null };
-        if (prev_hint) {
-            solver.recursiveSolver(0, [], 2, logic.reverse(prev_hint), hint);
-        } else {
-            solver.recursiveSolver(0, [], 2, null, hint);
-        }
+        // pass the previous hint as history, so the search won't undo it
+        solver.recursiveSolver(0, [], 2, prev_hint, hint);
         prev_hint = hint["step"];
         if (hint["score"] > curr_score) {
             visual.animateParticles(hint["step"], "hinter");
@@ -153,6 +153,7 @@ window.onPuzzleHint = function onHint() {
  */
 window.onPuzzleReset = function onReset() {
     solver.geneticSolverStop();
+    prev_hint = null;
     logic.initLogicParticleArray();
     visual.drawParticles();
     visual.showStatusText("Puzzle reset.");
@@ -163,6 +164,7 @@ window.onPuzzleReset = function onReset() {
  */
 window.onPuzzleShuffle = function onShuffle() {
     solver.geneticSolverStop();
+    prev_hint = null;
     var randsteps = logic.shuffle(SHUFFLE_STEPS);
     visual.drawParticles();
     visual.showStatusText("Shuffle(" + randsteps.length + ")");
@@ -175,6 +177,7 @@ window.onPuzzleSolve = function onSolve() {
     if (logic.getGameState() == CircleLogic.SOLVING || visual.animationInProgress()) return;
 
     if (!logic.isSolved()) {
+        prev_hint = null;
         // save current shuffled state
         logic.storeState();
         visual.drawParticles();
