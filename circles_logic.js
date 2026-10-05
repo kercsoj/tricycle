@@ -21,6 +21,8 @@ const SOLUTION_TEMPLATE =
         '3333322211111113332222222211111111111',
         '3333311111112223331111111111122222222',
         '2222211111112222221111111111133333333'];
+// numeric copy of the templates, used by the score function
+const SOLUTION_TEMPLATE_COLORS = SOLUTION_TEMPLATE.map(t => Uint8Array.from(t, Number));
 export const MAX_SCORE = PARTICLES_COUNT * 2;
 export const SHUFFLE_STEPS = 50;
 
@@ -43,9 +45,15 @@ export class CircleLogic {
     constructor() {
         this.pArrayLogic = [];
         this.stateBackup = null;
+        this.colorBackup = null;
         this.topPArray = [];
         this.leftPArray = [];
         this.rightPArray = [];
+
+        // per move index maps and scratch buffers for the fast score evaluation
+        this.moveMaps = {};
+        this.colorBuf = new Uint8Array(PARTICLES_COUNT);
+        this.colorTmp = new Uint8Array(PARTICLES_COUNT);
 
         this.state = CircleLogic.UNKNOWN;
     }
@@ -111,8 +119,26 @@ export class CircleLogic {
 
         // clear saved state backup
         this.stateBackup = null;
+        this.colorBackup = null;
+
+        this.initMoveMaps();
 
         this.setGameState(CircleLogic.INITIALIZED);
+    }
+
+    /**
+     * Precomputes an index map for every move: after the move, position i holds
+     * the particle that was at position map[i] before the move. The maps are built
+     * by running permutationStep() on an identity array, so they match it exactly.
+     */
+    initMoveMaps() {
+        var saved = this.pArrayLogic;
+        for (let step of MOVEMENT_LOOKUP_TABLE) {
+            this.pArrayLogic = Array.from({ length: PARTICLES_COUNT }, (_, i) => i);
+            this.permutationStep(step);
+            this.moveMaps[step] = Uint8Array.from(this.pArrayLogic);
+        }
+        this.pArrayLogic = saved;
     }
 
     /**
@@ -120,6 +146,14 @@ export class CircleLogic {
      */
     storeState() {
         this.stateBackup = this.pArrayLogic.slice();
+        this.colorBackup = this.colors();
+    }
+
+    /**
+     * @returns the colors of the particles, in position order
+     */
+    colors() {
+        return Uint8Array.from(this.pArrayLogic, p => p.color);
     }
 
     /**
@@ -277,53 +311,74 @@ export class CircleLogic {
     /**
      * Calculates the score of a part of a given circle. Every adjacent particle of the same color
      * increases the score with 1.
+     * @param {Uint8Array} colors - the particle colors, in position order
      * @param {array} circle - the circle to evaluate
      * @param {int} start - the start index (inclusive) to evaluate from
      * @param {int} end - the end index (inclusive) to evaluate to
      * @returns the calculated score
      */
-    evaluate(circle, start, end) {
+    evaluate(colors, circle, start, end) {
         var score = 1;
-        var c = this.pArrayLogic[circle[start]].color;
+        var c = colors[circle[start]];
         for (let i = start + 1; i <= end; i++) {
-            if (this.pArrayLogic[circle[i]].color == c) {
+            if (colors[circle[i]] == c) {
                 score++;
             } else {
-                c = this.pArrayLogic[circle[i]].color;
+                c = colors[circle[i]];
             }
         }
         return score;
     }
 
     /**
-     * Executes a permutation and then evaluates the result. 
-     * @param {array} steps - the permutation to execute before the evaluation
+     * Executes a permutation and then evaluates the result. The permutation runs on
+     * a color buffer, so the particleArrayLogic array stays unchanged.
+     * @param {array} steps - the permutation to execute before the evaluation.
+     * Assumption: the shuffled state was previously saved with storeState().
+     * Without steps, the current state is evaluated.
      * @returns The score of the permutated circles.
      */
     score(steps) {
-        var result = 0, r_max = 0;
+        var colors;
         if (steps) {
-            // Set the desired permutational state, so it can
-            // be evaluated. Assumption: the shuffled state was previously saved
-            // TODO: eliminate this dependency
-            this.restoreState();
-            this.permutation(steps);
+            colors = this.colorBuf;
+            colors.set(this.colorBackup || this.colors());
+            var tmp = this.colorTmp, swap;
+            for (let k = 0; k < steps.length; k++) {
+                let map = this.moveMaps[steps[k]];
+                if (!map) continue;
+                for (let i = 0; i < PARTICLES_COUNT; i++) {
+                    tmp[i] = colors[map[i]];
+                }
+                swap = colors; colors = tmp; tmp = swap;
+            }
+        } else {
+            colors = this.colors();
         }
+        return this.scoreColors(colors);
+    }
+
+    /**
+     * Evaluates a color array.
+     * @param {Uint8Array} colors - the particle colors, in position order
+     * @returns The score of the colors.
+     */
+    scoreColors(colors) {
+        var result, r_max = 0;
 
         // Get best overall score (check which solved state template)
         // matches the best
-        const reducer = (res, p) => res + p.color.toString();
-        var sArray = this.pArrayLogic.reduce(reducer, "");
-        for (let i = 0; i < SOLUTION_TEMPLATE.length; i++) {
-            for (let j = 0; j < sArray.length; j++) {
-                if (sArray[j] == SOLUTION_TEMPLATE[i][j]) {
+        for (let i = 0; i < SOLUTION_TEMPLATE_COLORS.length; i++) {
+            let t = SOLUTION_TEMPLATE_COLORS[i];
+            result = 0;
+            for (let j = 0; j < PARTICLES_COUNT; j++) {
+                if (colors[j] == t[j]) {
                     result++;
                 }
             }
             if (r_max < result) {
                 r_max = result;
             }
-            result = 0;
             // solution found, return immediately with high score
             if (r_max == PARTICLES_COUNT) {
                 return MAX_SCORE;
@@ -332,9 +387,9 @@ export class CircleLogic {
 
         // Add per circle scores
         return r_max
-            + this.evaluate(this.topPArray, 0, 17)
-            + this.evaluate(this.leftPArray, 3, 13)
-            + this.evaluate(this.rightPArray, 9, 16);
+            + this.evaluate(colors, this.topPArray, 0, 17)
+            + this.evaluate(colors, this.leftPArray, 3, 13)
+            + this.evaluate(colors, this.rightPArray, 9, 16);
     }
 
     /**
