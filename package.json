@@ -1,0 +1,8 @@
+{
+  "name": "tricycle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

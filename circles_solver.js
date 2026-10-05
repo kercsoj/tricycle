@@ -86,6 +86,8 @@ export class CircleSolver {
      * This function initialized the genetic solver engine, executes the solver and
      * returns the best solution
      * @returns The best solution the genetic solver found.
+     * @deprecated Use CircleSolver2.solve() from circles_solver2.js. This method will be
+     * removed in a later release.
      */
     geneticSolver() {
         var n_bits, n_iter, n_pop, r_cross, r_mut;
@@ -115,7 +117,7 @@ export class CircleSolver {
                     visual.showStatusText(`Solved: ${genetic_score}/${MAX_SCORE}`);
                     logic.setGameState(CircleLogic.SOLVED);
                 } else {
-                    visual.showStatusText(`Partially solved: ${genetic_score}/${MAX_SCORE}. Hit [Solve] to retry.`);
+                    visual.showStatusText(`Partially solved: ${genetic_score}/${MAX_SCORE}. Hit [Solver] for a full solution.`);
                     logic.setGameState(CircleLogic.SOLVED_PARTIAL);
                 }
                 // restore state so the animation can happen

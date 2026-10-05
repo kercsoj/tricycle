@@ -1,5 +1,8 @@
 "use strict";
 
+// @deprecated The genetic solver is replaced by the deterministic solver in circles_solver2.js.
+// This file will be removed in a later release.
+
 var n_bits, n_iter, n_gen, n_popsize, r_cross, r_mut, n_maxscore;
 var pop;
 var randomizer, logic;

@@ -20,7 +20,13 @@ The game uses the following notation to identify the moves:
 
 ## Help
 
-If you are stuck, you can use **Hint** or **Solve** buttons to help you out. Hint uses a recursive search to find the next best move, Solve uses a genetic algorithm to find the solution.
+If you are stuck, you can use **Hint** or **Solver** buttons to help you out. Hint uses a recursive search to find the next best move. **Solver** uses a deterministic two phase algorithm: phase 1 moves the blue particles into the exclusive part of one circle, phase 2 solves the rest without turning that circle. Both phases use precomputed distance tables (built on the first click, in about 2 seconds), so it always solves the puzzle, in about 23 moves.
+
+The old genetic solver (`onPuzzleSolve()`, `CircleSolver.geneticSolver()` and `genetic.js`) is deprecated: it has no button any more and will be removed in a later release. It often stops with a partial solution.
+
+## Tests
+
+Run `npm test` (needs Node.js, no dependencies).
 
 ## Complexity
 

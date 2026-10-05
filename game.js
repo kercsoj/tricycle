@@ -3,14 +3,18 @@
 import { CircleLogic, SHUFFLE_STEPS } from "./circles_logic.js";
 import { CircleVisual } from "./circles_visual.js";
 import { CircleSolver } from "./circles_solver.js";
+import { CircleSolver2 } from "./circles_solver2.js";
 
 const canvas = document.getElementById('canvas_t');
 const ctx = canvas.getContext('2d');
 const logic = new CircleLogic();
 const visual = new CircleVisual(logic, canvas, ctx);
 const solver = new CircleSolver(logic, visual);
+const solver2 = new CircleSolver2(logic);
 
 var prev_hint = null;
+// true while Solver2 builds its tables or searches
+var solver2_busy = false;
 
 /** 
  * Handles the mouse click events. If the click happened in a sensitive area 
@@ -172,10 +176,13 @@ window.onPuzzleShuffle = function onShuffle() {
 
 /**
  * Solves the puzzle. Well, at least it tries... :)
+ * @deprecated Use onPuzzleSolve2(), the deterministic solver. This genetic solver has no
+ * button any more and will be removed in a later release.
  */
 window.onPuzzleSolve = function onSolve() {
     if (logic.getGameState() == CircleLogic.SOLVING || visual.animationInProgress()) return;
 
+    console.warn("onPuzzleSolve() is deprecated, use onPuzzleSolve2()");
     if (!logic.isSolved()) {
         prev_hint = null;
         // save current shuffled state
@@ -184,6 +191,41 @@ window.onPuzzleSolve = function onSolve() {
         visual.showStatusText("Initialize solver engine...");
         solver.geneticSolver();
     }
+}
+
+/**
+ * Solves the puzzle with the deterministic two phase solver
+ */
+window.onPuzzleSolve2 = function onSolve2() {
+    if (solver2_busy || visual.animationInProgress()) return;
+
+    // Solver2 takes over from a running genetic solver
+    var prevGameState = logic.getGameState();
+    solver.geneticSolverStop();
+    if (logic.isSolved()) {
+        visual.showStatusText("Solver: the puzzle is already solved. Hit [Shuffle] first.");
+        return;
+    }
+
+    prev_hint = null;
+    solver2_busy = true;
+    logic.setGameState(CircleLogic.SOLVING);
+    // the first call builds the tables, let the status text show up first
+    visual.showStatusText(solver2.isReady() ? "Solver: solving..." : "Solver: building tables...");
+    window.setTimeout(function () {
+        try {
+            var steps = solver2.solve();
+            logic.setGameState(CircleLogic.SOLVED);
+            visual.showStatusText(`Solver: ${steps.length} moves: ${steps.join("")}`);
+            visual.animateParticles(steps, "solver");
+        } catch (e) {
+            console.error(e);
+            logic.setGameState(prevGameState == CircleLogic.SOLVING ? CircleLogic.SHUFFLED : prevGameState);
+            visual.showStatusText("Solver failed: " + e.message);
+        } finally {
+            solver2_busy = false;
+        }
+    }, 50);
 }
 
 /**

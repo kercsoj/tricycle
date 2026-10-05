@@ -41,8 +41,9 @@
                     <li><b>R / r: </b>rotate the right circle right or left.</li>
                 </ul>
                 <h3>Help</h3>
-                If you are stuck, you can use <b>Hint</b> or <b>Solve</b> buttons to help you out. Hint uses a
-                    recursive search to find the next best move, Solve uses a genetic algorithm to find the solution.
+                If you are stuck, you can use <b>Hint</b> or <b>Solver</b> buttons to help you out. Hint uses a
+                    recursive search to find the next best move. Solver uses a deterministic two phase algorithm with
+                    precomputed tables: it always solves the puzzle, in about 23 moves.
                 <h3>Good luck!</h3>
             </div>
         </div>
@@ -52,7 +53,7 @@
         <button class="button" onclick="onPuzzleShuffle()">Shuffle</button>
         <button class="button" onclick="onPuzzleReset()">Reset</button>
         <button class="button" onclick="onPuzzleHint()">Hint</button>
-        <button class="button" onclick="onPuzzleSolve()">Solve</button>
+        <button class="button" onclick="onPuzzleSolve2()">Solver</button>
         <button class="button" id="myHelpBtn">Help</button>
         <p id="footer_text"></p>
     </div>

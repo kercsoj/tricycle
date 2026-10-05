@@ -22,7 +22,7 @@ const SOLUTION_TEMPLATE =
         '3333311111112223331111111111122222222',
         '2222211111112222221111111111133333333'];
 // numeric copy of the templates, used by the score function
-const SOLUTION_TEMPLATE_COLORS = SOLUTION_TEMPLATE.map(t => Uint8Array.from(t, Number));
+export const SOLUTION_TEMPLATE_COLORS = SOLUTION_TEMPLATE.map(t => Uint8Array.from(t, Number));
 export const MAX_SCORE = PARTICLES_COUNT * 2;
 export const SHUFFLE_STEPS = 50;
 
