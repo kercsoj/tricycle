@@ -30,25 +30,26 @@ Run `npm test` (needs Node.js, no dependencies).
 
 ## Complexity
 
-The following calculation needs to be reviewed and demonstrated.
+**Pieces.** The puzzle has 37 particles in two shapes and three colors:
 
-The puzzle has 37 pieces: 37! = 13,763,753,091,226,345,046,315,979,581,580,902,400,000,000
+| | Red | Green | Blue | Total |
+|---|---|---|---|---|
+| "Eyes" | 12 | 7 | 5 | 24 |
+| "Stars" | 6 | 4 | 3 | 13 |
 
-* 12 red "eyes": 12! = 479,001,600
-* 7 green "eyes": 7! = 5,040
-* 5 blue "eyes": 5! = 120
-* 6 red "stars": 6! = 720
-* 4 green "stars": 4! = 24
-* 3 blue "stars": 3! = 6
+**Eyes and stars never mix.** Every move rotates a circle by one sixth of a turn (3 of its 18 slots), and no move ever takes an eye to a star slot or a star to an eye slot. A plain count over all 37 slots, 37! / (12!·6!·7!·4!·5!·3!) = 458,240,149,608,416,150,976,000, is therefore wrong: it counts states where eyes sit in star slots. Particles with the same color and shape look the same, so we count color patterns, separately for the two kinds of slot:
 
-The total number of possible permutations: 37! / (12!*6!*7!*4!*5!*3!) = 458,240,149,608,416,150,976,000
+* Eyes: 24! / (12!·7!·5!) = 2,141,691,552
+* Stars: 13! / (6!·4!·3!) = 60,060
+* Total: 2,141,691,552 × 60,060 = **128,629,994,613,120** (about 1.3 × 10^14)
 
-Rubik's cube possible permutations = 43,252,003,274,489,856,000
+**Every one of these states can be reached.** The distance tables of the deterministic solver (see `circles_solver2.js`) cover 100% of their states, so the solver solves any pattern. Six of the states count as solved.
 
-Does this mean, that Tricycle has 10,000 more permutations than Rubik's cube? Wow!
+**Lower bound on the moves needed.** There are six moves (T, t, L, l, R, r). After the first move, only five make sense, because the sixth one undoes the previous move. So from the six solved states, at most 6 × (1 + 6 + 6·5 + ... + 6·5^(n−1)) states are reachable in n moves or fewer:
 
-We have 6 possible movements (top circle, left circle, right circle) * (rotate left, rotate right)
+* n = 18: about 3.4 × 10^13, fewer than the 1.3 × 10^14 states.
+* n = 19: about 1.7 × 10^14, more than the number of states.
 
-6^30 < 37! / (12!*6!*7!*4!*5!*3!) ==> does this mean, that 30 movements are not enough to solve the puzzle from any shuffled state?
+So some shuffled states need at least 19 moves. This counting argument gives only a lower bound: it doesn't show that 19 moves are always enough.
 
-6^31 > 37! / (12!*6!*7!*4!*5!*3!) ==> is it possible to solve with maximum 31 permutations from any shuffled state?
+**Upper bound.** The deterministic solver never needs more than 18 moves in phase 1 and 23 moves in phase 2, so every state can be solved in at most 41 moves. The true maximum (the "God's number" of Tricycle) is somewhere from 19 to 41 moves. A small test with an optimal search solved random 50-move shuffles in 16 to 20 moves.
